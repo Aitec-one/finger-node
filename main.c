@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
-#include "zkinterface.h"
 #include "libzkfperrdef.h"
 #include "libzkfptype.h"
 #include "libzkfp.h"
@@ -122,7 +120,7 @@ int fp_match(unsigned char *temp, unsigned int len) {
     if (ret <= 0) {
         return 0;
     }
-    printf("Match");
+    printf("Match\n");
     return 1;
 }
 
@@ -136,15 +134,15 @@ void fp_mainLoop() {
         if (ret == ZKFP_ERR_OK) {
             if (opType == 0) {
                 if (fp_enroll(szTemplate, tempLen) == 1) {
-                    printf("Registered!");
+                    printf("Registered!\n");
                     opType = 1;
                 }
 
             } else if (opType == 1) {
                 if (fp_verify(szTemplate, tempLen) == 1) {
-                    printf("Verified!");
+                    printf("Verified!\n");
                 } else {
-                    printf("Not verified!");
+                    printf("Not verified!\n");
                 }
 
             } else if (opType == 2) {
@@ -158,7 +156,7 @@ void fp_mainLoop() {
 int main() {
     printf("Starting fingerprint demo...\n");
     if (fp_connect() == 1) {
-        printf("Starting main loop...");
+        printf("Starting main loop...\n");
         fp_mainLoop();
     }
     return 0;
