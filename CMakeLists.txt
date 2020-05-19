@@ -15,8 +15,6 @@ if (WIN32)
     endif(CMAKE_CL_64)
 endif(WIN32)
 
-#add_subdirectory("zktekolib/x86lib")
-
 include_directories(${CMAKE_SOURCE_DIR}/zktekolib/include)
 link_directories(${CMAKE_SOURCE_DIR}/zktekolib/x86lib)
 
