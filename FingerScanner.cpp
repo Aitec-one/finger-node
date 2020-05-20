@@ -1,71 +1,50 @@
-#include <windows.h>
-#include <stdio.h>
-#include <string.h>
+//
+// Created by Vladislav on 5/20/2020.
+//
 
-#include "libzkfperrdef.h"
-#include "libzkfptype.h"
-#include "libzkfp.h"
+#include "FingerScanner.h"
+#include <iostream>
 
-#define ENROLLCNT 3
-
-int userId = 100;
-int stop = 1;
-int opType = 0;
-
-int enrollIdx;
-unsigned char enrollTries[ENROLLCNT][MAX_TEMPLATE_SIZE];
-unsigned int enrollTriesLen[ENROLLCNT];
-
-HANDLE device;
-unsigned char *imgBuf;
-int width;
-int height;
-
-HANDLE dbCache;
-unsigned char lastRegTemplate[MAX_TEMPLATE_SIZE];
-unsigned int lastRegTempLen;
-
-int fp_connect() {
+int FingerScanner::connect() {
     if (ZKFPM_Init() != ZKFP_ERR_OK) {
-        printf("Init ZKFPM fail\n");
+        std::cout << "Init ZKFPM fail" << std::endl;
         return 0;
     }
-    printf("Init done\n");
+    std::cout << "Init done" << std::endl;
 
     if ((device = ZKFPM_OpenDevice(0)) == NULL) {
-        printf("Open sensor fail\n");
+        std::cout << "Open sensor fail" << std::endl;
         ZKFPM_Terminate();
         return 0;
     }
-    printf("Device is open\n");
+    std::cout << "Device is open" << std::endl;
 
     dbCache = ZKFPM_DBInit();
-    if (NULL == dbCache) {
-        printf("Create DBCache fail\n");
+    if (dbCache == NULL) {
+        std::cout << "Create DBCache fail" << std::endl;
         ZKFPM_CloseDevice(device);
         ZKFPM_Terminate();
         return 0;
     }
-    printf("DB loaded\n");
+    std::cout << "DB loaded" << std::endl;
 
     unsigned int size = 4;
     ZKFPM_GetParameters(device, 1, (unsigned char *) &width, &size);
     size = 4;
     ZKFPM_GetParameters(device, 2, (unsigned char *) &height, &size);
-    imgBuf = malloc(width * height * sizeof(unsigned char));
-
+    imgBuf = new unsigned char[width * height];
+    std::cout << "width: " << width << ", height: " << height << std::endl;
     return 1;
 }
 
-int fp_enroll(unsigned char *temp, unsigned int len) {
-
+int FingerScanner::enroll(unsigned char *temp, unsigned int len) {
     if (enrollIdx > 0) {
         if (0 >= ZKFPM_DBMatch(dbCache,
                                enrollTries[enrollIdx - 1],
                                enrollTriesLen[enrollIdx - 1], temp,
                                len)) {
             enrollIdx = 0;
-            printf("Please press the same finger while registering!\n");
+            std::cout << "Please press the same finger while registering!" << std::endl;
             return 0;
         }
     }
@@ -87,9 +66,9 @@ int fp_enroll(unsigned char *temp, unsigned int len) {
             if (ret == ZKFP_ERR_OK) {
                 memcpy(lastRegTemplate, szRegTemp, cbRegTemp);
                 lastRegTempLen = cbRegTemp;
-                printf("Register succ\n");
+                std::cout << "Register succ" << std::endl;
             } else {
-                printf("Register fail, because add to db fail, ret=%d\n", ret);
+                std::cout << "Register fail, because add to db fail, ret=" << ret << std::endl ;
                 return 0;
             }
         }
@@ -103,7 +82,7 @@ int fp_enroll(unsigned char *temp, unsigned int len) {
     return 0;
 }
 
-int fp_verify(unsigned char *temp, unsigned int len) {
+int FingerScanner::verify(unsigned char *temp, unsigned int len) {
     unsigned int tid = 0;
     unsigned int score = 0;
     int ret = ZKFPM_DBIdentify(dbCache, temp, len, &tid, &score);
@@ -115,7 +94,7 @@ int fp_verify(unsigned char *temp, unsigned int len) {
     return 1;
 }
 
-int fp_match(unsigned char *temp, unsigned int len) {
+int FingerScanner::match(unsigned char *temp, unsigned int len) {
     int ret = ZKFPM_DBMatch(dbCache, lastRegTemplate, lastRegTempLen, temp, len);
     if (ret <= 0) {
         return 0;
@@ -124,8 +103,8 @@ int fp_match(unsigned char *temp, unsigned int len) {
     return 1;
 }
 
-void fp_mainLoop() {
-    while (stop) {
+void FingerScanner::mainLoop() {
+    while (!stop) {
         unsigned char szTemplate[MAX_TEMPLATE_SIZE];
         unsigned int tempLen = MAX_TEMPLATE_SIZE;
         int ret = ZKFPM_AcquireFingerprint(device, imgBuf,
@@ -133,31 +112,22 @@ void fp_mainLoop() {
                                            szTemplate, &tempLen);
         if (ret == ZKFP_ERR_OK) {
             if (opType == 0) {
-                if (fp_enroll(szTemplate, tempLen) == 1) {
+                if (enroll(szTemplate, tempLen) == 1) {
                     printf("Registered!\n");
                     opType = 1;
                 }
 
             } else if (opType == 1) {
-                if (fp_verify(szTemplate, tempLen) == 1) {
+                if (verify(szTemplate, tempLen) == 1) {
                     printf("Verified!\n");
                 } else {
                     printf("Not verified!\n");
                 }
 
             } else if (opType == 2) {
-                fp_match(szTemplate, tempLen);
+                match(szTemplate, tempLen);
             }
         }
         Sleep(10);
     }
-}
-
-int main() {
-    printf("Starting fingerprint demo...\n");
-    if (fp_connect() == 1) {
-        printf("Starting main loop...\n");
-        fp_mainLoop();
-    }
-    return 0;
 }
