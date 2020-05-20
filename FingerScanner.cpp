@@ -82,11 +82,11 @@ bool FingerScanner::enroll(unsigned char *temp, unsigned int len) {
     return false;
 }
 
-bool FingerScanner::import(const std::string& base64Encoded) {
+bool FingerScanner::import(const std::string &base64Encoded) {
     std::vector<BYTE> decodedData = base64_decode(base64Encoded);
     if (!decodedData.empty()) {
         int ret = ZKFPM_DBAdd(dbCache, userId++,
-                &decodedData[0], decodedData.size());
+                              &decodedData[0], decodedData.size());
         if (ret == ZKFP_ERR_OK) {
             return true;
         }
@@ -106,20 +106,20 @@ bool FingerScanner::verify(unsigned char *temp, unsigned int len) {
         return false;
     }
 
-    std::cout << "Verified: " << tid << score << std::endl;
+    std::cout << "Verified: userId: " << tid << ", score: " << score << std::endl;
     return true;
 }
 
-bool FingerScanner::match(unsigned char *temp, unsigned int len) {
-    int ret = ZKFPM_DBMatch(dbCache, lastRegTemplate, lastRegTempLen, temp, len);
+bool FingerScanner::match(unsigned char *temp, unsigned int len,
+                          unsigned char *expected, unsigned int expLen) {
+    int ret = ZKFPM_DBMatch(dbCache, expected, expLen, temp, len);
     if (ret <= 0) {
         return false;
     }
-    std::cout << "Match" << std::endl;
     return true;
 }
 
-int FingerScanner::acquireFingerprint(unsigned char *szTemplate, unsigned int* tempLen) {
+int FingerScanner::acquireFingerprint(unsigned char *szTemplate, unsigned int *tempLen) {
     return ZKFPM_AcquireFingerprint(device, imgBuf,
                                     width * height,
                                     szTemplate, tempLen);

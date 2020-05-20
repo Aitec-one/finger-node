@@ -13,15 +13,16 @@ class FingerScanner {
 public:
     bool connect();
 
-    bool import(const std::string& base64Encoded);
+    bool import(const std::string &base64Encoded);
 
-    int acquireFingerprint(unsigned char *szTemplate, unsigned int* tempLen);
+    int acquireFingerprint(unsigned char *szTemplate, unsigned int *tempLen);
 
     bool enroll(unsigned char *temp, unsigned int len);
 
     bool verify(unsigned char *temp, unsigned int len);
 
-    bool match(unsigned char *temp, unsigned int len);
+    bool match(unsigned char *temp, unsigned int len,
+               unsigned char *expected, unsigned int expLen);
 
     std::string getLastRegistered();
 
@@ -31,7 +32,7 @@ private:
     int width = 0;
     int height = 0;
 
-    int userId = 1;
+    int userId = 100;
 
     HANDLE dbCache;
     unsigned char lastRegTemplate[MAX_TEMPLATE_SIZE];
