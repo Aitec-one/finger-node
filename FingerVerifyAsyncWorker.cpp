@@ -3,11 +3,13 @@
 //
 
 #include "FingerVerifyAsyncWorker.h"
+
+#include <utility>
 using namespace std;
 
-FingerVerifyAsyncWorker::FingerVerifyAsyncWorker(string &tmpl, Function &callback) :
+FingerVerifyAsyncWorker::FingerVerifyAsyncWorker(string tmpl, Function &callback) :
         AsyncWorker(callback),
-        tmpl(tmpl),
+        tmpl(std::move(tmpl)),
         stop(false),
         verified(false) {
     this->scanner = new FingerScanner();
@@ -32,7 +34,9 @@ void FingerVerifyAsyncWorker::Execute() {
                     cout << "Not matched!" << endl;
                 }
             }
+#if defined(_WIN32)
             Sleep(10);
+#endif
         }
     } else {
         SetError("Could not connect to finger!");

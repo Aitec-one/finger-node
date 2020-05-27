@@ -1,7 +1,10 @@
 #ifndef ZKTECOTEST_FINGERSCANNER_H
 #define ZKTECOTEST_FINGERSCANNER_H
 
+#if defined(_WIN32)
 #include <windows.h>
+#endif
+
 #include <iostream>
 #include "libzkfperrdef.h"
 #include "libzkfptype.h"

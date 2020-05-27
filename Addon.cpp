@@ -16,7 +16,8 @@ void Verify(const CallbackInfo &info) {
     String tmpl = info[0].As<String>();
     Function cb = info[1].As<Function>();
 
-    FingerVerifyAsyncWorker *worker = new FingerVerifyAsyncWorker(tmpl.Utf8Value(), cb);
+    const string &templ = tmpl.Utf8Value();
+    FingerVerifyAsyncWorker *worker = new FingerVerifyAsyncWorker(templ, cb);
     worker->Queue();
 }
 

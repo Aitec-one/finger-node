@@ -29,7 +29,9 @@ void FingerEnrollAsyncWorker::Execute() {
                     stop = true;
                 }
             }
+#if defined(_WIN32)
             Sleep(10);
+#endif
         }
     } else {
         SetError("Could not connect to finger!");

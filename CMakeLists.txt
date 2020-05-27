@@ -4,7 +4,15 @@ if (CMAKE_JS_VERSION)
     set(CMAKE_CXX_STANDARD 11)
 
     set(NAPI_INCLUDES_DIR node_modules/node-addon-api ../node-addon-api)
-    set(ZKTECO_INCLUDES_DIR ${CMAKE_SOURCE_DIR}/zktekolib/include)
+
+    IF (WIN32)
+        set(ZKTECO_INCLUDES_DIR ${CMAKE_SOURCE_DIR}/zktekolib/win/include)
+        set(ZKTEKO_LIB ${CMAKE_SOURCE_DIR}/zktekolib/win/x64lib/libzkfp.lib)
+    ELSE()
+        set(ZKTECO_INCLUDES_DIR ${CMAKE_SOURCE_DIR}/zktekolib/unix/include)
+        set(ZKTEKO_LIB ${CMAKE_SOURCE_DIR}/zktekolib/unix/lib-x64/libzkfp.so)
+    ENDIF()
+
     add_definitions(-DCMAKE_JS)
 
     include_directories("${CMAKE_JS_INC}")
@@ -30,7 +38,7 @@ if (CMAKE_JS_VERSION)
     target_link_libraries(
             ${PROJECT_NAME}
             ${CMAKE_JS_LIB}
-            ${CMAKE_SOURCE_DIR}/zktekolib/x64lib/libzkfp.lib
+            ${ZKTEKO_LIB}
     )
 
 else ()
@@ -38,10 +46,17 @@ else ()
     set(CMAKE_CXX_STANDARD 11)
 
     set(NAPI_INCLUDES_DIR node_modules/node-addon-api ../node-addon-api)
-    include_directories(${CMAKE_SOURCE_DIR}/zktekolib/include)
+    IF (WIN32)
+        set(ZKTECO_INCLUDES_DIR ${CMAKE_SOURCE_DIR}/zktekolib/win/include)
+        set(ZKTEKO_LIB ${CMAKE_SOURCE_DIR}/zktekolib/win/x64lib/libzkfp.lib)
+    ELSE()
+        set(ZKTECO_INCLUDES_DIR ${CMAKE_SOURCE_DIR}/zktekolib/unix/include)
+        set(ZKTEKO_LIB ${CMAKE_SOURCE_DIR}/zktekolib/unix/lib-x64/libzkfp.so)
+    ENDIF()
+
+    include_directories(${ZKTECO_INCLUDES_DIR})
     include_directories(${NAPI_INCLUDES_DIR})
-    link_directories(${CMAKE_SOURCE_DIR}/zktekolib/x64lib)
 
     add_executable(${PROJECT_NAME} finger_test.cpp Addon.cpp FingerVerifyAsyncWorker.cpp FingerVerifyAsyncWorker.h FingerEnrollAsyncWorker.cpp FingerEnrollAsyncWorker.h FingerScanner.cpp FingerScanner.h base64.cpp base64.h)
-    target_link_libraries(${PROJECT_NAME} libzkfp)
+    target_link_libraries(${PROJECT_NAME} ${ZKTEKO_LIB})
 endif ()

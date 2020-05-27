@@ -15,7 +15,7 @@ using namespace std;
 
 class FingerVerifyAsyncWorker : public AsyncWorker {
 public:
-    FingerVerifyAsyncWorker(string &tmpl,
+    FingerVerifyAsyncWorker(string tmpl,
                       Function &callback);
 
     void Execute();
