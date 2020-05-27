@@ -25,7 +25,8 @@ void writeTemplate(const string& tmpl, const char* fileName) {
     out.close();
 }
 
-void mainLoop(FingerScanner* scanner, const string& templ) {
+void mainLoop(FingerScanner* scanner) {
+    string templ = readTemplate(tmplFileName);
     std::vector<BYTE> storedTmpl;
     if (!templ.empty()) {
         cout << "Using template from file" << endl;
@@ -69,15 +70,11 @@ void mainLoop(FingerScanner* scanner, const string& templ) {
 int main() {
     cout << "Starting fingerprint demo..." << endl;
 
-    string templ = readTemplate(tmplFileName);
-//    cout << "Template:" << endl;
-//    cout << templ << endl;
-
     FingerScanner scanner;
 
     if (scanner.connect()) {
         cout << "Starting main loop..." << endl;
-        mainLoop(&scanner, templ);
+        mainLoop(&scanner);
     }
     return 0;
 }

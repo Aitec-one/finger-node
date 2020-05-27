@@ -1,0 +1,17 @@
+{
+  "name": "finger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "author": "Aitec.ont",
+  "license": "MIT",
+  "gypfile": true,
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "cmake-js": "6.1.0",
+    "node-addon-api": "^1.6.2"
+  },
+  "scripts": {
+    "install": "cmake-js compile"
+  }
+}
