@@ -4,6 +4,7 @@
 
 #include "FingerScanner.h"
 #include "base64.h"
+#include <string.h>
 
 bool FingerScanner::connect() {
     if (ZKFPM_Init() != ZKFP_ERR_OK) {
