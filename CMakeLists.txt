@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
-if (CMAKE_JS_VERSION)
+
+IF (CMAKE_JS_VERSION)
     project(finger)
     set(CMAKE_CXX_STANDARD 11)
 
@@ -20,12 +21,13 @@ if (CMAKE_JS_VERSION)
 
     file(GLOB SOURCE_FILES Addon.cpp FingerVerifyAsyncWorker.cpp FingerVerifyAsyncWorker.h FingerEnrollAsyncWorker.cpp FingerEnrollAsyncWorker.h FingerScanner.cpp FingerScanner.h base64.cpp base64.h)
 
-    if (CMAKE_COMPILER_IS_GNUCC)
+    IF (CMAKE_COMPILER_IS_GNUCC)
         # needed for gcc 4.6+
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
-    endif ()
+    ENDIF()
 
     add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
+
     target_include_directories(${PROJECT_NAME} PRIVATE ${ZKTECO_INCLUDES_DIR})
 
     message("Cmake js lib is: ${CMAKE_JS_LIB}")
@@ -34,14 +36,17 @@ if (CMAKE_JS_VERSION)
     target_include_directories(${PROJECT_NAME} PRIVATE ${NAPI_INCLUDES_DIR})
     set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 
-#    link_directories(${CMAKE_SOURCE_DIR}/zktekolib/x64lib)
-    target_link_libraries(
-            ${PROJECT_NAME}
-            ${CMAKE_JS_LIB}
-            ${ZKTEKO_LIB}
-    )
+    IF (WIN32)
+        target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} ${ZKTEKO_LIB})
+    ELSE()
+        message("Importing shared zktecolib as fingerlib")
 
-else ()
+        add_library(fingerlib SHARED IMPORTED)
+        set_target_properties(fingerlib PROPERTIES IMPORTED_LOCATION ${ZKTEKO_LIB})
+        target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} fingerlib)
+    ENDIF()
+
+ELSE()
     project(zktecotest)
     set(CMAKE_CXX_STANDARD 11)
 
@@ -59,4 +64,4 @@ else ()
 
     add_executable(${PROJECT_NAME} finger_test.cpp Addon.cpp FingerVerifyAsyncWorker.cpp FingerVerifyAsyncWorker.h FingerEnrollAsyncWorker.cpp FingerEnrollAsyncWorker.h FingerScanner.cpp FingerScanner.h base64.cpp base64.h)
     target_link_libraries(${PROJECT_NAME} ${ZKTEKO_LIB})
-endif ()
+ENDIF()
