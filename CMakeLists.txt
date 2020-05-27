@@ -4,6 +4,9 @@ IF (CMAKE_JS_VERSION)
     project(finger)
     set(CMAKE_CXX_STANDARD 11)
 
+    message("Cmake js lib is: ${CMAKE_JS_LIB}")
+    add_definitions(-DCMAKE_JS)
+
     set(NAPI_INCLUDES_DIR node_modules/node-addon-api ../node-addon-api)
 
     IF (WIN32)
@@ -14,11 +17,6 @@ IF (CMAKE_JS_VERSION)
         set(ZKTEKO_LIB ${CMAKE_SOURCE_DIR}/zktekolib/unix/lib-x64/libzkfp.so)
     ENDIF()
 
-    add_definitions(-DCMAKE_JS)
-
-    include_directories("${CMAKE_JS_INC}")
-    include_directories("${ZKTECO_INCLUDES_DIR}")
-
     file(GLOB SOURCE_FILES Addon.cpp FingerVerifyAsyncWorker.cpp FingerVerifyAsyncWorker.h FingerEnrollAsyncWorker.cpp FingerEnrollAsyncWorker.h FingerScanner.cpp FingerScanner.h base64.cpp base64.h)
 
     IF (CMAKE_COMPILER_IS_GNUCC)
@@ -26,12 +24,11 @@ IF (CMAKE_JS_VERSION)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
     ENDIF()
 
+    include_directories("${CMAKE_JS_INC}")
+
     add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 
     target_include_directories(${PROJECT_NAME} PRIVATE ${ZKTECO_INCLUDES_DIR})
-
-    message("Cmake js lib is: ${CMAKE_JS_LIB}")
-
     # Include N-API wrappers
     target_include_directories(${PROJECT_NAME} PRIVATE ${NAPI_INCLUDES_DIR})
     set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
