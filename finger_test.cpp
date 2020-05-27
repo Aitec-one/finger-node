@@ -27,7 +27,7 @@ void writeTemplate(const string& tmpl, const char* fileName) {
 
 void mainLoop(FingerScanner* scanner) {
     string templ = readTemplate(tmplFileName);
-    std::vector<BYTE> storedTmpl;
+    vector<BYTE> storedTmpl;
     if (!templ.empty()) {
         cout << "Using template from file" << endl;
         storedTmpl = base64_decode(templ);

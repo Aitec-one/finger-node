@@ -1,21 +1,20 @@
 #include <napi.h>
 
-#include "DataProcessingAsyncWorker.h"
+#include "FingerAsyncWorker.h"
 
 using namespace Napi;
 
-void ProcessData(const CallbackInfo &info) {
-    Buffer<uint8_t> data = info[0].As<Buffer<uint8_t>>();
+void Start(const CallbackInfo &info) {
+    String tmpl = info[0].As<String>();
     Function cb = info[1].As<Function>();
 
-    DataProcessingAsyncWorker *worker = new DataProcessingAsyncWorker(data, cb);
+    FingerAsyncWorker *worker = new FingerAsyncWorker(tmpl.Utf8Value(), cb);
     worker->Queue();
 }
 
 Object Init(Env env, Object exports) {
-    exports.Set(String::New(env, "processData"),
-                Function::New(env, ProcessData));
+    exports.Set(String::New(env, "start"), Function::New(env, Start));
     return exports;
 }
 
-//NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
