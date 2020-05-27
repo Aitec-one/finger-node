@@ -23,17 +23,19 @@ IF (CMAKE_JS_VERSION)
             ./napi_addon/Addon.cpp
             ./napi_addon/FingerVerifyAsyncWorker.cpp
             ./napi_addon/FingerEnrollAsyncWorker.cpp
-            FingerScanner.cpp
-            base64.cpp)
+            ./finger_scanner/FingerScanner.cpp
+            ./finger_scanner/base64.cpp)
 
     IF (CMAKE_COMPILER_IS_GNUCC)
         # needed for gcc 4.6+
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
     ENDIF()
 
-    include_directories("${CMAKE_SOURCE_DIR}/includes")
-    include_directories("${CMAKE_SOURCE_DIR}/napi_addon/includes")
-    include_directories("${CMAKE_JS_INC}")
+    set(FINGER_INCLUDES ${CMAKE_SOURCE_DIR}/finger_scanner/includes)
+
+    include_directories(${FINGER_INCLUDES})
+    include_directories(${CMAKE_SOURCE_DIR}/napi_addon/includes)
+    include_directories(${CMAKE_JS_INC})
 
     add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 
@@ -69,10 +71,12 @@ ELSE()
         set(ZKTEKO_LIB ${ZKTEKO_LIB_DIR}/libzkfp.so)
     ENDIF()
 
-    include_directories(${CMAKE_SOURCE_DIR}/includes)
+    set(FINGER_INCLUDES_DIR ${CMAKE_SOURCE_DIR}/finger_scanner/includes)
     include_directories(${ZKTECO_INCLUDES_DIR})
+    include_directories(${FINGER_INCLUDES_DIR})
 
-    add_library(finger FingerScanner.cpp base64.cpp)
+
+    add_library(finger ./finger_scanner/FingerScanner.cpp ./finger_scanner/base64.cpp)
 
     IF (WIN32)
         target_link_libraries(finger ${ZKTEKO_LIB})
