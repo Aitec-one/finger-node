@@ -65,7 +65,9 @@ void mainLoop(FingerScanner* scanner) {
                 }
             }
         }
+#ifdef WIN32
         Sleep(10);
+#endif
     }
 }
 

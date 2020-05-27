@@ -6,6 +6,8 @@
 #endif
 
 #include <iostream>
+
+#include "zkinterface.h"
 #include "libzkfperrdef.h"
 #include "libzkfptype.h"
 #include "libzkfp.h"
