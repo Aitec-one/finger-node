@@ -75,10 +75,9 @@ ELSE()
     add_library(finger FingerScanner.cpp base64.cpp)
 
     IF (WIN32)
-        target_link_libraries(${PROJECT_NAME} ${ZKTEKO_LIB} finger)
+        target_link_libraries(finger ${ZKTEKO_LIB})
     ELSE ()
         target_link_libraries(finger -lpthread -ldl -L${ZKTEKO_LIB_DIR})
-#
     ENDIF()
 
     add_subdirectory(finger_test)

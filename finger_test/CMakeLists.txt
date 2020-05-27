@@ -19,4 +19,8 @@ include_directories(${PROJECT_SOURCE_DIR}/includes)
 
 add_executable(${PROJECT_NAME} finger_test.cpp)
 
-target_link_libraries(${PROJECT_NAME} finger -lpthread -ldl -L${ZKTEKO_LIB_DIR})
+IF (WIN32)
+    target_link_libraries(finger ${ZKTEKO_LIB})
+ELSE ()
+    target_link_libraries(finger -lpthread -ldl -L${ZKTEKO_LIB_DIR})
+ENDIF()
