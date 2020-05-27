@@ -1,4 +1,4 @@
-#include <napi.h>
+//#include <napi.h>
 
 #include "FingerVerifyAsyncWorker.h"
 #include "FingerEnrollAsyncWorker.h"
@@ -21,9 +21,11 @@ void Verify(const CallbackInfo &info) {
 }
 
 Object Init(Env env, Object exports) {
-    exports.Set(String::New(env, "enroll"), Function::New(env, Enroll));
-    exports.Set(String::New(env, "verify"), Function::New(env, Verify));
+    exports["enroll"] = Function::New(env, Enroll, std::string("enroll"));
+    exports["verify"] = Function::New(env, Verify, std::string("verify"));
+//    exports.Set(String::New(env, "enroll"), Function::New(env, Enroll));
+//    exports.Set(String::New(env, "verify"), Function::New(env, verify));
     return exports;
 }
 
-NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
+NODE_API_MODULE(addon, Init)

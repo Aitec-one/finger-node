@@ -3,6 +3,7 @@
 //
 
 #include "FingerEnrollAsyncWorker.h"
+
 using namespace std;
 
 FingerEnrollAsyncWorker::FingerEnrollAsyncWorker(Function &callback) :
@@ -28,9 +29,8 @@ void FingerEnrollAsyncWorker::Execute() {
                 if (scanner->enroll(acquiredTmpl, acTmplLen) == 1) {
                     cout << "Registered!" << endl;
                     this->tmpl = scanner->getLastRegistered();
-                    cout <<  this->tmpl << endl;
+                    stop = true;
                 }
-
             }
             Sleep(10);
         }
@@ -39,10 +39,7 @@ void FingerEnrollAsyncWorker::Execute() {
     }
 }
 
-string FingerEnrollAsyncWorker::GetTemplate() {
-    return tmpl;
-}
 
 void FingerEnrollAsyncWorker::OnOK() {
-    Callback().Call({});
+    Callback().Call({Env().Null(), String::New(Env(), tmpl)});
 }

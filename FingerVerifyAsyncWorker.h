@@ -25,6 +25,7 @@ public:
 private:
     string tmpl;
     bool stop;
+    bool verified;
     FingerScanner *scanner;
 };
 

@@ -22,8 +22,6 @@ public:
 
     void OnOK();
 
-    string GetTemplate();
-
 private:
     string tmpl;
     bool stop;

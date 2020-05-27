@@ -8,7 +8,8 @@ using namespace std;
 FingerVerifyAsyncWorker::FingerVerifyAsyncWorker(string &tmpl, Function &callback) :
         AsyncWorker(callback),
         tmpl(tmpl),
-        stop(false) {
+        stop(false),
+        verified(false) {
     this->scanner = new FingerScanner();
 }
 
@@ -27,12 +28,12 @@ void FingerVerifyAsyncWorker::Execute() {
             int ret = scanner->acquireFingerprint(acquiredTmpl, &acTmplLen);
             if (ret == ZKFP_ERR_OK) {
                 if (scanner->match(acquiredTmpl, acTmplLen, &storedTmpl[0], storedTmpl.size())) {
-                    cout << "Matched!" << endl;
+//                    cout << "Matched!" << endl;
+                    verified = true;
                     stop = true;
                 } else {
                     cout << "Not matched!" << endl;
                 }
-
             }
             Sleep(10);
         }
@@ -42,5 +43,6 @@ void FingerVerifyAsyncWorker::Execute() {
 }
 
 void FingerVerifyAsyncWorker::OnOK() {
-    Callback().Call({});
+    string result = verified ? "verified" : "";
+    Callback().Call({Env().Null(), String::New(Env(), result)});
 }
