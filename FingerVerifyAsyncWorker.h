@@ -2,8 +2,8 @@
 // Created by Vladislav on 5/20/2020.
 //
 
-#ifndef ZKTECOTEST_DATAPROCESSINGASYNCWORKER_H
-#define ZKTECOTEST_DATAPROCESSINGASYNCWORKER_H
+#ifndef ZKTECOTEST_FINGERVERIFYASYNCWORKER_H
+#define ZKTECOTEST_FINGERVERIFYASYNCWORKER_H
 
 #include <napi.h>
 #include <iostream>
@@ -13,9 +13,9 @@
 using namespace Napi;
 using namespace std;
 
-class FingerAsyncWorker : public AsyncWorker {
+class FingerVerifyAsyncWorker : public AsyncWorker {
 public:
-    FingerAsyncWorker(string &tmpl,
+    FingerVerifyAsyncWorker(string &tmpl,
                       Function &callback);
 
     void Execute();
@@ -25,10 +25,8 @@ public:
 private:
     string tmpl;
     bool stop;
-    int opType;
-    bool success;
     FingerScanner *scanner;
 };
 
 
-#endif //ZKTECOTEST_DATAPROCESSINGASYNCWORKER_H
+#endif //ZKTECOTEST_FINGERVERIFYASYNCWORKER_H

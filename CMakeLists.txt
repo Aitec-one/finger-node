@@ -10,7 +10,7 @@ if (CMAKE_JS_VERSION)
     include_directories("${CMAKE_JS_INC}")
     include_directories("${ZKTECO_INCLUDES_DIR}")
 
-    file(GLOB SOURCE_FILES Addon.cpp FingerAsyncWorker.cpp FingerAsyncWorker.h FingerScanner.cpp FingerScanner.h base64.cpp base64.h)
+    file(GLOB SOURCE_FILES Addon.cpp FingerVerifyAsyncWorker.cpp FingerVerifyAsyncWorker.h FingerEnrollAsyncWorker.cpp FingerEnrollAsyncWorker.h FingerScanner.cpp FingerScanner.h base64.cpp base64.h)
 
     if (CMAKE_COMPILER_IS_GNUCC)
         # needed for gcc 4.6+
@@ -42,6 +42,6 @@ else ()
     include_directories(${NAPI_INCLUDES_DIR})
     link_directories(${CMAKE_SOURCE_DIR}/zktekolib/x64lib)
 
-    add_executable(${PROJECT_NAME} finger_test.cpp FingerAsyncWorker.cpp FingerAsyncWorker.h FingerScanner.cpp FingerScanner.h base64.cpp base64.h)
+    add_executable(${PROJECT_NAME} finger_test.cpp Addon.cpp FingerVerifyAsyncWorker.cpp FingerVerifyAsyncWorker.h FingerEnrollAsyncWorker.cpp FingerEnrollAsyncWorker.h FingerScanner.cpp FingerScanner.h base64.cpp base64.h)
     target_link_libraries(${PROJECT_NAME} libzkfp)
 endif ()

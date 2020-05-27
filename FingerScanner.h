@@ -9,6 +9,8 @@
 
 #define ENROLLCNT 3
 
+
+
 class FingerScanner {
 public:
     bool connect();

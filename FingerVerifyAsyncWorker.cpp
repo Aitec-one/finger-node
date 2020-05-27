@@ -2,27 +2,23 @@
 // Created by Vladislav on 5/20/2020.
 //
 
-#include "FingerAsyncWorker.h"
+#include "FingerVerifyAsyncWorker.h"
 using namespace std;
 
-FingerAsyncWorker::FingerAsyncWorker(string &tmpl, Function &callback) :
+FingerVerifyAsyncWorker::FingerVerifyAsyncWorker(string &tmpl, Function &callback) :
         AsyncWorker(callback),
         tmpl(tmpl),
-        stop(false),
-        opType(0),
-        success(false) {
+        stop(false) {
     this->scanner = new FingerScanner();
 }
 
-void FingerAsyncWorker::Execute() {
+void FingerVerifyAsyncWorker::Execute() {
     if (scanner->connect()) {
         cout << "Starting main loop..." << endl;
-//    string templ = readTemplate(tmplFileName);
         vector<BYTE> storedTmpl;
         if (!tmpl.empty()) {
             cout << "Using template from file" << endl;
             storedTmpl = base64_decode(tmpl);
-            opType = 2;
         }
 
         while (!stop) {
@@ -30,15 +26,13 @@ void FingerAsyncWorker::Execute() {
             unsigned int acTmplLen = MAX_TEMPLATE_SIZE;
             int ret = scanner->acquireFingerprint(acquiredTmpl, &acTmplLen);
             if (ret == ZKFP_ERR_OK) {
-                cout << "Got finger event" << endl;
                 if (scanner->match(acquiredTmpl, acTmplLen, &storedTmpl[0], storedTmpl.size())) {
                     cout << "Matched!" << endl;
-                    success = true;
+                    stop = true;
                 } else {
                     cout << "Not matched!" << endl;
-                    success = false;
                 }
-                stop = true;
+
             }
             Sleep(10);
         }
@@ -47,6 +41,6 @@ void FingerAsyncWorker::Execute() {
     }
 }
 
-void FingerAsyncWorker::OnOK() {
+void FingerVerifyAsyncWorker::OnOK() {
     Callback().Call({});
 }
