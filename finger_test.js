@@ -18,5 +18,4 @@ finger.enroll((err, result) => {
         console.log("enrolled:");
         console.log(result)
     }
-
 });

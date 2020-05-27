@@ -15,10 +15,8 @@ FingerVerifyAsyncWorker::FingerVerifyAsyncWorker(string &tmpl, Function &callbac
 
 void FingerVerifyAsyncWorker::Execute() {
     if (scanner->connect()) {
-        cout << "Starting main loop..." << endl;
         vector<BYTE> storedTmpl;
         if (!tmpl.empty()) {
-            cout << "Using template from file" << endl;
             storedTmpl = base64_decode(tmpl);
         }
 
@@ -28,7 +26,6 @@ void FingerVerifyAsyncWorker::Execute() {
             int ret = scanner->acquireFingerprint(acquiredTmpl, &acTmplLen);
             if (ret == ZKFP_ERR_OK) {
                 if (scanner->match(acquiredTmpl, acTmplLen, &storedTmpl[0], storedTmpl.size())) {
-//                    cout << "Matched!" << endl;
                     verified = true;
                     stop = true;
                 } else {
@@ -38,7 +35,7 @@ void FingerVerifyAsyncWorker::Execute() {
             Sleep(10);
         }
     } else {
-        cout << "Could not connect to finger!" << endl;
+        SetError("Could not connect to finger!");
     }
 }
 
