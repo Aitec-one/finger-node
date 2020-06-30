@@ -1,6 +1,6 @@
 {
   "name": "finger-node",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "ZKTeco fingerscanner nodejs module",
   "keywords": [
     "ZKTeco",
@@ -15,8 +15,5 @@
   },
   "scripts": {
     "install": "cmake-js compile"
-  },
-  "publishConfig": {
-    "registry": "http://10.10.10.24:8081/repository/finger/"
   }
 }
